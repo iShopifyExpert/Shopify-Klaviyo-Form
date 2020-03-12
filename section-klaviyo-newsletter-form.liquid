@@ -1,0 +1,47 @@
+<div class="newsletter">
+  {% if section.settings.enable_klaviyo %}
+  <form id="email_signup" class="klaviyo_styling klaviyo_gdpr_embed_{{section.settings.klaviyo_list_id}} email-capture__form" action="//manage.kmail-lists.com/subscriptions/subscribe" data-ajax-submit="//manage.kmail-lists.com/ajax/subscriptions/subscribe" method="GET" target="_blank" novalidate="novalidate">
+             <input type="hidden" name="g" value="{{section.settings.klaviyo_list_id}}">
+             <label for="k_id_email" class="sr-only email-capture__label" style="display:none;">Email Address</label>
+             <input class="email-capture__input transparent-field" type="email" value="" name="email" id="k_id_email" placeholder="email123@gmail.com"/>
+             <button type="submit" class="klaviyo_submit_button btn newsletter-button">Subscribe</button>
+             <div class="klaviyo_messages">
+               <p class="success_message" style="display:none;"></p>
+               <p class="error_message" style="display:none;"></p>
+             </div>
+  </form>
+  {% else %}
+  {% form 'customer' %}
+           {% if form.posted_successfully? %}
+           <p><em>{{ 'general.newsletter_form.success_text' | t }}</em></p>{% elsif form.errors %}{% for field in form.errors %}
+           <p><em>{{ field }} - {{ form.errors.messages[field] }}</em></p>{% endfor %}{% endif %}
+           <input type="hidden" name="contact[tags]" value="prospect,newsletter"/>
+           <input type="hidden" name="contact[first_name]" value="{{ 'general.newsletter_form.subscriber_first_name' | t }}" />
+           <input type="hidden" name="contact[last_name]" value="{{ 'general.newsletter_form.subscriber_last_name' | t }}" />
+           <input type="email" class="transparent-field" id="email" name="contact[email]" required pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" placeholder="email address" />
+           <button type='submit' class="btn newsletter-button">{{ 'general.newsletter_form.submit' | t }}</button>
+  {% endform %}
+  {% endif %}
+</div>
+<script type="text/javascript" src="//www.klaviyo.com/media/js/public/klaviyo_subscribe.js"></script>
+<script type="text/javascript"> KlaviyoSubscribe.attachToForms('#email_signup', { hide_form_on_success: true, extra_properties: { $source: 'HomePageSignUp', Brand: 'Klaviyo' } }); </script>
+{% schema %}
+  {
+    "name": "Section Get Started",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_klaviyo",
+        "label": "Enable Klaviyo",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "klaviyo_list_id",
+        "label": "Klaviyo List ID",
+        "default": "QLGgJB",
+        "info": "Write Klaviyo LIST_ID here"
+      }
+    ]
+  }
+{% endschema %}
